@@ -796,7 +796,7 @@ main {
 }
 
 .footer {
-  background-color: #111;
+  background-color: #6A0D0D;
   color: white;
   padding: 60px 0 20px;
 }
@@ -821,18 +821,18 @@ main {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.footer-social {
+.footer-social-foot {
   display: flex;
   gap: 15px;
 }
 
-.social-link {
+.social-link-footer {
   color: white;
   font-size: 1.2rem;
   transition: color 0.3s ease;
 }
 
-.social-link:hover {
+.social-link-footer:hover {
   color: var(--secondary);
 }
 

@@ -12,12 +12,12 @@ const Footer = () => {
               Empowering students to achieve academic excellence through quality education, 
               personalized attention, and innovative teaching methodologies.
             </p>
-            <div className = "footer-social">
-              <a href="#" className = "social-link"><FaFacebook /></a>
-              <a href="#" className = "social-link"><FaTwitter /></a>
-              <a href="#" className = "social-link"><FaInstagram /></a>
-              <a href="#" className = "social-link"><FaYoutube /></a>
-              <a href="#" className = "social-link"><FaLinkedin /></a>
+            <div className = "footer-social-foot">
+              <a href="#" className = "social-link-footer"><FaFacebook /></a>
+              <a href="#" className = "social-link-footer"><FaTwitter /></a>
+              <a href="#" className = "social-link-footer"><FaInstagram /></a>
+              <a href="#" className = "social-link-footer"><FaYoutube /></a>
+              <a href="#" className = "social-link-footer"><FaLinkedin /></a>
             </div>
           </div>
           
