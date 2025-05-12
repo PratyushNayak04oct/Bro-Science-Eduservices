@@ -81,7 +81,8 @@ const AboutSection = () => {
             </div>
           </div>
           
-          <div className = "stats-container">
+          <div className = "stats-container ">
+
             <div className = "stats-card">
               <div className = "stats-icon">
                 <FaBookOpen />
