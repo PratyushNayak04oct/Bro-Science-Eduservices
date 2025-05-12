@@ -17,7 +17,7 @@ const Home = () => {
     window.scrollTo(0, 0);
     
     // Update page title
-    document.title = 'Bro Science Eduservices - Empowering Young Minds';
+    document.title = 'Bro Science Eduservices - Your ATTITUDE decides your ALTITUDE.';
   }, []);
 
   return (
