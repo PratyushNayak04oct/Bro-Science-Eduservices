@@ -1198,7 +1198,7 @@ main {
 .marquee-container {
   display: flex;
   gap: 40px;
-  animation: scroll 30s linear infinite;
+  animation: scroll 15s linear infinite;
   white-space: nowrap;
 }
 
