@@ -27,11 +27,11 @@ const Home = () => {
       <AboutSection />
       <CoursesSection />
       <FacultySection />
+      <AchievementsSection />
       <TestimonialsSection />
       <BlogSection />
       <VideoSection />
       <SocialSection />
-      <AchievementsSection />
     </>
   );
 };
