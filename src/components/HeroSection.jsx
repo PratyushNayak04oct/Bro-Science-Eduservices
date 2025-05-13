@@ -60,7 +60,7 @@ const HeroSection = () => {
         {sliderImages.map((img, index) => (
           <div 
             key={index} 
-            className={`slide ${index === currentSlide ? 'active' : ''}`}
+            className = {`slide ${index === currentSlide ? 'active' : ''}`}
             style={{ backgroundImage: `url(${img})` }}
           />
         ))}
