@@ -37,12 +37,12 @@ const Footer = () => {
           <div className = "footer-courses">
             <h3 className = "footer-title">Our Courses</h3>
             <ul>
-              <li><Link to="/courses/iit-jee">IIT JEE Preparation</Link></li>
-              <li><Link to="/courses/neet">NEET Coaching</Link></li>
-              <li><Link to="/courses/class-11-12">Class 11-12 Science</Link></li>
-              <li><Link to="/courses/foundation">Foundation Courses</Link></li>
-              <li><Link to="/courses/cuet">CUET Preparation</Link></li>
-              <li><Link to="/courses/iiser-niser">IISER & NISER Coaching</Link></li>
+              <li><Link to="/courses">IIT JEE Preparation</Link></li>
+              <li><Link to="/courses">NEET Coaching</Link></li>
+              <li><Link to="/courses">Class 11-12 Science</Link></li>
+              <li><Link to="/courses">Foundation Courses</Link></li>
+              <li><Link to="/courses">CUET Preparation</Link></li>
+              <li><Link to="/courses">IISER & NISER Coaching</Link></li>
             </ul>
           </div>
           

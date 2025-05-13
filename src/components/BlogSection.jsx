@@ -1,11 +1,16 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Observer } from 'gsap/Observer';
 import { FaUser, FaCalendar, FaArrowRight } from 'react-icons/fa';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, Observer);
 
 const BlogSection = () => {
   const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
   
   const blogs = [
     {
@@ -46,31 +51,106 @@ const BlogSection = () => {
     }
   ];
 
-  useGSAP(() => {
-    gsap.from('.blog-card', {
-      opacity: 0,
-      y: 50,
-      stagger: 0.2,
-      duration: 0.8,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top 70%',
-        end: 'bottom 70%',
-        toggleActions: 'play none none reverse'
-      }
+  // Use a debounced visibility approach instead of animating during scroll
+  useEffect(() => {
+    // Pre-load images to avoid janky loading during animation
+    blogs.forEach(blog => {
+      const img = new Image();
+      img.src = blog.image;
     });
-  }, { scope: sectionRef });
+    
+    // Create an Intersection Observer instead of ScrollTrigger
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          // Set state instead of animating directly in the scroll event
+          setIsVisible(true);
+          // Disconnect once triggered to improve performance
+          observer.disconnect();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2, // Trigger when 20% visible
+      }
+    );
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    
+    // Animation is now separated from scroll triggering
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  });
+
+  // Separate animation effect from visibility detection
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    // Run animations only after the component is visible
+    // This happens independent of scrolling
+    const ctx = gsap.context(() => {
+      const cards = document.querySelectorAll('.blog-card');
+      
+      // Set initial state
+      gsap.set(cards, { opacity: 0, y: 30 });
+      
+      // Animate with requestAnimationFrame to run off main thread
+      requestAnimationFrame(() => {
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.5,
+          ease: "power2.out",
+          clearProps: "transform",
+          force3D: true,
+          // No ScrollTrigger here - triggered by state
+        });
+      });
+    });
+    
+    return () => ctx.revert();
+  }, [isVisible]);
 
   return (
-    <section ref={sectionRef} className = "blog-section section">
+    <section 
+      ref={sectionRef} 
+      className = "blog-section section"
+      style={{ 
+        willChange: 'contents',
+        contain: 'content'  // CSS containment for better performance
+      }}
+    >
       <div className = "container">
         <h2 className = "section-title">Success Stories</h2>
         
         <div className = "blog-container">
           {blogs.map((blog) => (
-            <div key={blog.id} className = "blog-card">
+            <div 
+              key={blog.id} 
+              className = "blog-card"
+              style={{ 
+                opacity: 0,
+                willChange: 'opacity, transform',
+                contain: 'content' 
+              }}
+            >
               <div className = "blog-image">
-                <img src={blog.image} alt={blog.title} />
+                <img 
+                  src={blog.image} 
+                  alt={blog.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="100%" 
+                  height="auto"
+                />
                 <span className = "blog-tag">{blog.tag}</span>
               </div>
               <div className = "blog-content">

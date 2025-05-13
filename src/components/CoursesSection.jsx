@@ -86,7 +86,7 @@ const CoursesSection = () => {
               <div className = "course-content">
                 <h3 className = "course-title">{course.title}</h3>
                 <p className = "course-description">{course.description}</p>
-                <Link to={`/courses/${course.id}`} className = "learn-more">
+                <Link to = "/courses" className = "learn-more">
                   Learn More →
                 </Link>
               </div>
