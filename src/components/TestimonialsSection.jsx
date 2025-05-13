@@ -5,7 +5,9 @@ import { FaQuoteLeft } from 'react-icons/fa';
 
 const TestimonialsSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const sectionRef = useRef(null);
+  const slideRef = useRef(null);
   
   const testimonials = [
     {
@@ -42,23 +44,55 @@ const TestimonialsSection = () => {
     });
   }, { scope: sectionRef });
 
+  const animateSlideChange = (nextIndex) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    
+    // First animate out the current slide
+    gsap.to(slideRef.current, {
+      opacity: 0,
+      scale: 0,
+      duration: 0.25,
+      onComplete: () => {
+        // Update state
+        setCurrentSlide(nextIndex);
+        
+        // Then animate in the new slide
+        gsap.fromTo(
+          slideRef.current,
+          { opacity: 0, scale: 0 },
+          { 
+            opacity: 1, 
+            scale: 1, 
+            duration: 0.25,
+            onComplete: () => {
+              setIsAnimating(false);
+            }
+          }
+        );
+      }
+    });
+  };
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    const nextIndex = currentSlide === testimonials.length - 1 ? 0 : currentSlide + 1;
+    animateSlideChange(nextIndex);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+    const prevIndex = currentSlide === 0 ? testimonials.length - 1 : currentSlide - 1;
+    animateSlideChange(prevIndex);
   };
 
   return (
-    <section ref={sectionRef} className = "testimonials-section section">
+    <section ref={sectionRef} className = "testimonials-section">
       <div className = "container">
-        <h2 className = "section-title">Student Testimonials</h2>
+        <h2 className = "section-title">Voices of Trust</h2>
         
         <div className = "testimonial-container">
-          <button className = "testimonial-nav prev-button" onClick={prevSlide}>&lt;</button>
+          <button className = "testimonial-nav prev-button mr-12" onClick={prevSlide} disabled={isAnimating}>&lt;</button>
           
-          <div className = "testimonial-slide">
+          <div className = "testimonial-slide" ref={slideRef}>
             <FaQuoteLeft className = "quote-icon" />
             <p className = "testimonial-text">{testimonials[currentSlide].text}</p>
             
@@ -73,14 +107,18 @@ const TestimonialsSection = () => {
             </div>
           </div>
           
-          <button className = "testimonial-nav next-button" onClick={nextSlide}>&gt;</button>
+          <button className = "testimonial-nav next-button" onClick={nextSlide} disabled={isAnimating}>&gt;</button>
           
           <div className = "testimonial-controls">
             {testimonials.map((_, index) => (
               <div
                 key={index}
                 className={`control-dot ${index === currentSlide ? 'active' : ''}`}
-                onClick={() => setCurrentSlide(index)}
+                onClick={() => {
+                  if (index !== currentSlide && !isAnimating) {
+                    animateSlideChange(index);
+                  }
+                }}
               />
             ))}
           </div>
