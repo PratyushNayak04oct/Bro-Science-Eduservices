@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Observer } from 'gsap/Observer';
+import { useGSAP } from '@gsap/react';
 import { FaUser, FaCalendar, FaArrowRight } from 'react-icons/fa';
 
 // Register GSAP plugins
@@ -51,20 +52,20 @@ const BlogSection = () => {
     }
   ];
 
-  // Use a debounced visibility approach instead of animating during scroll
-  useEffect(() => {
+  // Pre-load images using useGSAP
+  useGSAP(() => {
     // Pre-load images to avoid janky loading during animation
     blogs.forEach(blog => {
       const img = new Image();
       img.src = blog.image;
     });
     
-    // Create an Intersection Observer instead of ScrollTrigger
+    // Create an Intersection Observer
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-          // Set state instead of animating directly in the scroll event
+          // Set state when section becomes visible
           setIsVisible(true);
           // Disconnect once triggered to improve performance
           observer.disconnect();
@@ -81,43 +82,35 @@ const BlogSection = () => {
       observer.observe(sectionRef.current);
     }
     
-    // Animation is now separated from scroll triggering
     return () => {
       if (observer) {
         observer.disconnect();
       }
     };
-  });
+  }, []); // Empty dependency array since we only want this to run once on mount
 
-  // Separate animation effect from visibility detection
-  useEffect(() => {
+  // Animation effect using useGSAP
+  useGSAP(() => {
     if (!isVisible) return;
     
-    // Run animations only after the component is visible
-    // This happens independent of scrolling
-    const ctx = gsap.context(() => {
-      const cards = document.querySelectorAll('.blog-card');
-      
-      // Set initial state
-      gsap.set(cards, { opacity: 0, y: 30 });
-      
-      // Animate with requestAnimationFrame to run off main thread
-      requestAnimationFrame(() => {
-        gsap.to(cards, {
-          opacity: 1,
-          y: 0,
-          stagger: 0.1,
-          duration: 0.5,
-          ease: "power2.out",
-          clearProps: "transform",
-          force3D: true,
-          // No ScrollTrigger here - triggered by state
-        });
+    const cards = document.querySelectorAll('.blog-card');
+    
+    // Set initial state
+    gsap.set(cards, { opacity: 0, y: 30 });
+    
+    // Animate with requestAnimationFrame to run off main thread
+    requestAnimationFrame(() => {
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: "power2.out",
+        clearProps: "transform",
+        force3D: true,
       });
     });
-    
-    return () => ctx.revert();
-  }, [isVisible]);
+  }, { dependencies: [isVisible], scope: sectionRef }); // Re-run when isVisible changes, scoped to sectionRef
 
   return (
     <section 
@@ -166,7 +159,7 @@ const BlogSection = () => {
                     {blog.date}
                   </div>
                 </div>
-                <Link to={`/blogs/${blog.id}`} className = "read-more">
+                <Link to = "/blogs" className = "read-more">
                   Read Full Story <FaArrowRight />
                 </Link>
               </div>
