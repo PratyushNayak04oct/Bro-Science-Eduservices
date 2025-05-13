@@ -8,10 +8,18 @@ import { FaTrophy, FaCheckCircle, FaChartLine, FaUsers } from 'react-icons/fa';
 
 const AchievementsSection = () => {
   const sectionRef = useRef(null);
+  const counterRefs = useRef([]);
+  
+  // Parse the numeric value from achievement titles
+  const extractNumber = (title) => {
+    const match = title.match(/(\d+)\+?/);
+    return match ? parseInt(match[1]) : 0;
+  };
   
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
     
+    // Animation for achievement cards
     gsap.from('.achievement-card', {
       opacity: 0,
       y: 50,
@@ -25,6 +33,38 @@ const AchievementsSection = () => {
       }
     });
     
+    // Counter animations for each achievement title
+    achievements.forEach((achievement, index) => {
+      const targetNumber = extractNumber(achievement.title);
+      
+      // Create a counter animation for each number
+      let counterTween = gsap.to(counterRefs.current[index], {
+        innerHTML: targetNumber,
+        duration: 2,
+        snap: { innerHTML: 1 }, // Ensures the number is always an integer
+        ease: "power2.out",
+        paused: true, // Start paused
+        onUpdate: function() {
+          // Add the '+' symbol if it exists in the original title
+          if (achievement.title.includes('+')) {
+            counterRefs.current[index].innerHTML += '+';
+          }
+        }
+      });
+      
+      // Create scroll trigger for the counter
+      ScrollTrigger.create({
+        trigger: counterRefs.current[index],
+        start: 'top 80%',
+        onEnter: () => counterTween.restart(),
+        onLeaveBack: () => {
+          // Reset to 0 when scrolling back up
+          gsap.set(counterRefs.current[index], { innerHTML: '0' });
+        }
+      });
+    });
+    
+    // CTA container animation
     gsap.from('.cta-container', {
       opacity: 0,
       y: 30,
@@ -71,15 +111,29 @@ const AchievementsSection = () => {
         <h2 className = "section-title">Our Achievements</h2>
         
         <div className = "achievements-container">
-          {achievements.map((achievement) => (
-            <div key={achievement.id} className = "achievement-card">
-              <div className = "achievement-icon">
-                {achievement.icon}
+          {achievements.map((achievement, index) => {
+            // Split the title into number and text parts
+            const titleParts = achievement.title.split(/(\d+\+?)/);
+            
+            return (
+              <div key={achievement.id} className = "achievement-card">
+                <div className = "achievement-icon">
+                  {achievement.icon}
+                </div>
+                <h3 className = "achievement-title">
+                  {titleParts[0]}
+                  <span 
+                    ref={el => counterRefs.current[index] = el} 
+                    className = "counter"
+                  >
+                    0
+                  </span>
+                  {titleParts[2] || ''}
+                </h3>
+                <p className = "achievement-description">{achievement.description}</p>
               </div>
-              <h3 className = "achievement-title">{achievement.title}</h3>
-              <p className = "achievement-description">{achievement.description}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <div className = "cta-container">
