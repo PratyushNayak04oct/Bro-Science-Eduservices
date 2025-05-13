@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
@@ -8,10 +8,21 @@ import { FaBookOpen, FaUserGraduate, FaTrophy, FaClock } from 'react-icons/fa';
 
 const AboutSection = () => {
   const sectionRef = useRef(null);
+  const statsRef = useRef(null);
+  const [countersAnimated, setCountersAnimated] = useState(false);
+
+  // Define the target values for each counter
+  const counterValues = {
+    courses: 10,
+    students: 1000,
+    success: 200,
+    years: 15
+  };
 
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
 
+    // Animation for about text
     gsap.from('.about-text', {
       opacity: 0,
       y: 50,
@@ -24,6 +35,7 @@ const AboutSection = () => {
       }
     });
 
+    // Animation for stats cards
     gsap.from('.stats-card', {
       opacity: 0,
       y: 30,
@@ -37,6 +49,7 @@ const AboutSection = () => {
       }
     });
 
+    // Animation for button
     gsap.from('.about-button', {
       opacity: 0,
       y: 20,
@@ -45,6 +58,44 @@ const AboutSection = () => {
         trigger: '.about-button',
         start: 'top 90%',
         toggleActions: 'play none none reverse'
+      }
+    });
+
+    // Counter animation for stats numbers
+    const counterElements = document.querySelectorAll('.stats-number');
+    
+    // Create scroll trigger for counter animation
+    ScrollTrigger.create({
+      trigger: statsRef.current,
+      start: 'top 80%',
+      onEnter: () => {
+        if (!countersAnimated) {
+          counterElements.forEach(counter => {
+            const targetValue = parseInt(counter.getAttribute('data-value'));
+            
+            gsap.fromTo(
+              counter,
+              { innerText: 0 },
+              {
+                innerText: targetValue,
+                duration: 2,
+                ease: 'power2.inOut',
+                snap: { innerText: 1 }, // Ensures whole numbers
+                onUpdate: function() {
+                  counter.innerText = Math.ceil(this.targets()[0].innerText) + (targetValue >= 100 || targetValue === 15 ? '+' : '');
+                }
+              }
+            );
+          });
+          setCountersAnimated(true);
+        }
+      },
+      onLeaveBack: () => {
+        // Reset counters when scrolling back up
+        counterElements.forEach(counter => {
+          counter.innerText = '0';
+        });
+        setCountersAnimated(false);
       }
     });
     
@@ -81,13 +132,12 @@ const AboutSection = () => {
             </div>
           </div>
           
-          <div className = "stats-container ">
-
+          <div ref={statsRef} className = "stats-container">
             <div className = "stats-card">
               <div className = "stats-icon">
                 <FaBookOpen />
               </div>
-              <div className = "stats-number">15+</div>
+              <div className = "stats-number" data-value={counterValues.courses}>0</div>
               <div className = "stats-label">Courses Offered</div>
             </div>
             
@@ -95,7 +145,7 @@ const AboutSection = () => {
               <div className = "stats-icon">
                 <FaUserGraduate />
               </div>
-              <div className = "stats-number">1000+</div>
+              <div className = "stats-number" data-value={counterValues.students}>0</div>
               <div className = "stats-label">Students Enrolled</div>
             </div>
             
@@ -103,7 +153,7 @@ const AboutSection = () => {
               <div className = "stats-icon">
                 <FaTrophy />
               </div>
-              <div className = "stats-number">200+</div>
+              <div className = "stats-number" data-value={counterValues.success}>0</div>
               <div className = "stats-label">Success Stories</div>
             </div>
             
@@ -111,7 +161,7 @@ const AboutSection = () => {
               <div className = "stats-icon">
                 <FaClock />
               </div>
-              <div className = "stats-number">10+</div>
+              <div className = "stats-number" data-value={counterValues.years}>0</div>
               <div className = "stats-label">Years Experience</div>
             </div>
           </div>
