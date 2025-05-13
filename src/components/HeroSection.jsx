@@ -28,7 +28,7 @@ const HeroSection = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  });
 
   useGSAP(() => {
     // Initial animation for hero content
@@ -55,8 +55,8 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section ref={heroRef} className = "hero-section">
-      <div className = "slider-container">
+    <section ref={heroRef} className="hero-section">
+      <div className="slider-container">
         {sliderImages.map((img, index) => (
           <div 
             key={index} 
@@ -64,15 +64,16 @@ const HeroSection = () => {
             style={{ backgroundImage: `url(${img})` }}
           />
         ))}
-        <div className = "slider-overlay"></div>
+        <div className="slider-overlay"></div>
       </div>
       
-      <div className = "hero-content">
+      <div className="hero-content">
         <h1>
-          Your <span>ATTITUDE</span> decides<br /> your <span>ALTITUDE</span>
+          Your <span style={{ textShadow: '3px 3px 6px rgba(0, 0, 0, 0.6)' }}>ATTITUDE</span> decides<br /> 
+          your <span style={{ textShadow: '3px 3px 6px rgba(0, 0, 0, 0.6)' }}>ALTITUDE</span>
         </h1>
         <p>Join Bro Science Eduservices and reach your full potential</p>
-        <div className = "hero-buttons">
+        <div className="hero-buttons">
           <Link to="/courses">
             <Button type="primary">Explore Courses</Button>
           </Link>
@@ -82,9 +83,9 @@ const HeroSection = () => {
         </div>
       </div>
       
-      <div className = "slider-controls">
-        <button onClick={prevSlide} className = "slider-arrow prev">&lt;</button>
-        <div className = "slider-dots">
+      <div className="slider-controls">
+        <button onClick={prevSlide} className="slider-arrow prev">&lt;</button>
+        <div className="slider-dots">
           {sliderImages.map((_, index) => (
             <span 
               key={index} 
@@ -93,7 +94,7 @@ const HeroSection = () => {
             />
           ))}
         </div>
-        <button onClick={nextSlide} className = "slider-arrow next">&gt;</button>
+        <button onClick={nextSlide} className="slider-arrow next">&gt;</button>
       </div>
     </section>
   );
