@@ -37,7 +37,7 @@ body {
   font-family: 'Poppins', sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
-  /* background-color: #FFFBE6; */
+  background-color: #FFFBE6;
 }
 
 /* Basic utility classes */
